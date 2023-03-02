@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+service ServerTest {
+    rpc test (ClientInput) returns (ServerOutput) {}
+}
+message ClientInput {
+    string dataType = 1;
+}
+message ServerOutput {
+    string message = 1;
+}
