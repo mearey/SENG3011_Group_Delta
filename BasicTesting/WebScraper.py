@@ -1,18 +1,37 @@
 import requests
+import json
 from bs4 import BeautifulSoup
 
-URL = "https://epiwatch-api.azurewebsites.net/api/grid"
+WHOURL = "https://www.who.int/emergencies/disease-outbreak-news"
 
-page = requests.post(URL)
+i = 140
 
-data = page.json()
+f = open("WHOdataTest.json", "a")
+dataFormatted = json.loads("[]")
+while i > 0:
+    WHOURL = "https://www.who.int/emergencies/disease-outbreak-news/" + str(i)
+    i = i - 1
 
-def GetDataType(datatype):
-    l = []
-    if datatype == "all":
-        for item in data["results"]:
-            l.append(item)
-    else:
-        for item in data["results"]:
-            l.append(item[datatype])
-    return l
+    who = requests.get(WHOURL)
+    soup = BeautifulSoup(who.content, "html.parser")
+    content = soup.find(id="PageContent_C010_Col00")
+    list = content.find_all(class_="sf-list-vertical__item")
+
+    for item in list:
+        title = item.find(class_="sf-list-vertical__title") 
+        strings = title.find_all()
+
+        date = strings[1].text
+        locationAndDisease = strings[2].text.split("-")
+        disease = locationAndDisease[0]
+        location = "N/A"
+        
+        if len(location) == 2:
+            location = locationAndDisease[1]
+        
+        jsonData = {"date":date, "disease":disease, "location" : location}
+
+        dataFormatted.append(jsonData)
+        
+f.write(json.dumps(dataFormatted))
+f.close()
