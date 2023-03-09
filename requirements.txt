@@ -1,3 +1,4 @@
 pytest
 flake8
 requests
+nltk==3.8.1
