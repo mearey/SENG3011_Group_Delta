@@ -17,5 +17,5 @@ def GetEpiwatchData():
 
 def WriteDataToFile(filename):
     f = open(filename, "a")
-    f.write(GetEpiwatchData())
+    f.write(json.dumps(GetEpiwatchData()))
     f.close()
