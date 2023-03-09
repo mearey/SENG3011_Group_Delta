@@ -20,10 +20,11 @@ def server():
 
     now = datetime.now()
     time = now.strftime("%H:%M:%S")
-    while time != "00:00:00":
+    while True:
         now = datetime.now()
         time = now.strftime("%H:%M:%S")
-    WebScraper.refreshAllJsonData(5, "BasicTesting/WHOdataTest.json")
+        if time != "00:00:00":
+            WebScraper.refreshAllJSONData(5, "BasicTesting/WHOdataTest.json")
 
     server.wait_for_termination()
 
