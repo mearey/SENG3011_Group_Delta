@@ -8,6 +8,7 @@
 import pytest
 import re
 import json
+import datetime
 
 #Import functions to be tested
 from EpiwatchAPI import GetEpiwatchData, WriteDataToFile
@@ -46,7 +47,6 @@ def test_getEpiwatchData_basicData(epiwatchTest_fixture):
     
     #assert that the JSON returned is non empty
     assert(output != [])
-
     #for each record make sure they are valid
     for item in output:
         #make sure that all records have the correct keys
@@ -54,16 +54,23 @@ def test_getEpiwatchData_basicData(epiwatchTest_fixture):
 
         #token that checks for a date of format 0000-00-00
         # this is used to assert that evey date is of the correect format
-        date_token = "^[0,9][0-9][0-9][0-9]?-[0,9][0,9]-[0,9][0,9]{3}$"
+        date_token = "%Y-%m-%d"
 
         #assert that each date matches the format
-        assert(re.search(date_token, item["date"]))
+        res = True
+
+        try:
+            res = bool(datetime.datetime.strptime(item["date"], date_token))
+        except ValueError:
+            res = False
+
+        assert(res)
 
         #check that the disease feild is of type string (some entires can be empty strings)
-        assert(type(item["disease"]) == str)
+        assert(item["disease"] != "")
 
-        #check that the location field is of type string 
-        assert(type(item["location"]) == str)
+        #check that the location field is of type string
+        assert(re.search("[A-z]+", item["location"]))
     
 #make sure that a valid JSON file is written when the funciton is called
 def test_WriteDataToFile_basic(epiwatchTest_fixture):
