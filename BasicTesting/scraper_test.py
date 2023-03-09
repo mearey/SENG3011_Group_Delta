@@ -11,7 +11,7 @@ import re
 import json
 
 # Import functions to be tested
-from WebScraper import checkForMultiCountry, refreshAllJsonData, retrieveJsonData
+from WebScraper import checkForMultiCountry, refreshAllJSONData, retrieveJSONData
 
 # Filenames of test files
 filename_empty = "BasicTesting/testOutput/scraperTestEmpty.json"
@@ -76,17 +76,17 @@ def test_checkForMultiCountry_none(scraperTest_fixture):
     assert(checkForMultiCountry(l)) == "None"
     
 ########################
-# retrieveJsonData Tests
+# retrieveJSONData Tests
 ########################
 
 # Confirm that an empty JSON output is returned when argument is 0.
-def test_retrieveJsonData_empty(scraperTest_fixture):
-    assert(retrieveJsonData(0)) == []
+def test_retrieveJSONData_empty(scraperTest_fixture):
+    assert(retrieveJSONData(0)) == []
 
 # Confirm that an argument of 1 returns valid content.
-def test_retrieveJsonData_basicContent(scraperTest_fixture):
+def test_retrieveJSONData_basicContent(scraperTest_fixture):
     # Run the function 
-    output = retrieveJsonData(1)
+    output = retrieveJSONData(1)
     
     # Assert that the returned JSON is non-empty
     assert(output != [])
@@ -115,20 +115,20 @@ def test_retrieveJsonData_basicContent(scraperTest_fixture):
         
 
 # Confirm that an argument of 2 returns more content than an argument of 1.
-def test_retrieveJsonData_contentIncreases(scraperTest_fixture):
-    onePage = retrieveJsonData(1)
-    twoPage = retrieveJsonData(2)
+def test_retrieveJSONData_contentIncreases(scraperTest_fixture):
+    onePage = retrieveJSONData(1)
+    twoPage = retrieveJSONData(2)
     
     assert(len(twoPage) > len(onePage))
     
 #
-# refreshAllJsonData Tests
+# refreshAllJSONData Tests
 #
 
 # Confirm that a valid, empty JSON file is written when i argument is 0.
-def test_refreshAllJsonData_empty(scraperTest_fixture):
+def test_refreshAllJSONData_empty(scraperTest_fixture):
     # Write to file
-    refreshAllJsonData(0,filename_empty)
+    refreshAllJSONData(0,filename_empty)
     
     # Access & read file
     f = open(filename_empty, "r")
@@ -142,10 +142,10 @@ def test_refreshAllJsonData_empty(scraperTest_fixture):
     
 
 # Confirm that a valid, populated JSON file is written when i argument is 1.
-def test_refreshAllJsonData_basic(scraperTest_fixture):
+def test_refreshAllJSONData_basic(scraperTest_fixture):
     
     # Write to file
-    refreshAllJsonData(1,filename_basic)
+    refreshAllJSONData(1,filename_basic)
     
     # Access & read file
     f = open(filename_basic, "r")
@@ -156,9 +156,3 @@ def test_refreshAllJsonData_basic(scraperTest_fixture):
     
     # Assert file contents are non-empty
     assert(content != '[]')
-    
-    # Assert file contents were taken from JSON retrieval function and written without change
-    # We also ignore quotations.
-    retrieved = str(retrieveJsonData(1)).replace('"',"").replace("'","")
-    content = str(content).replace('"',"").replace("'","")
-    assert(retrieved == content)

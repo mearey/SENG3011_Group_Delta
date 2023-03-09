@@ -1,9 +1,10 @@
 import requests
 import json
 import nltk
+import spacy
 nltk.download('averaged_perceptron_tagger')
-nltk.download('punkt')
 from bs4 import BeautifulSoup
+nlp = spacy.load("en_core_med7_lg")
 
 def checkForMultiCountry(l):
     for item in l:
@@ -13,10 +14,27 @@ def checkForMultiCountry(l):
             return "Global"
     return "None"
 
-def retrieveJsonData(i):
-    
+def findDiseaseName(s):
+    disease = nltk.pos_tag(nltk.word_tokenize(s))
+    for item in disease:
+        if (item[1] == "NNP" or "NNS" or "NN") and not item[0].isdigit():
+            disease = item[0]
+            return disease
+    return "N/A"
+
+def findDiseaseEntity(s):
+    result = nlp(s)
+    # print(result)
+    # print(result.ents)
+    for ent in result.ents:
+        # print(ent.label_)
+        if ent.label_ == "DISEASE":
+            return ent.text
+    return "N/A"
+
+def retrieveJSONData(i):
     dataFormatted = json.loads("[]")
-    
+
     while i > 0:
         WHOURL = "https://www.who.int/emergencies/disease-outbreak-news/" + str(i)
         i = i - 1
@@ -28,17 +46,21 @@ def retrieveJsonData(i):
         for item in list:
             title = item.find(class_="sf-list-vertical__title") 
             strings = title.find_all()
-            date = strings[1].text
+            date = strings[1].text.strip("| ")
             locationAndDisease = strings[2].text.split(" - ")
 
-            disease = nltk.pos_tag(nltk.word_tokenize(locationAndDisease[0]))
+            disease = locationAndDisease[0]
+            #findDiseaseName(locationAndDisease[0])
             if disease == "Multi":
-                disease = nltk.pos_tag(nltk.word_tokenize(locationAndDisease[1]))
-
-            for item in disease:
-                if item[1] == "NNP" or "NN" or "NNS":
-                    disease = item[0]
-                    break
+                disease = locationAndDisease[1]
+                #findDiseaseName(locationAndDisease[1])
+            
+            #if disease == "N/A":
+                #URL = item["href"]
+                #pageContent = requests.get(URL)
+                #soup = BeautifulSoup(pageContent.content, "html.parser")
+                #article = soup.find(class_="sf-detail-body-wrapper")
+                #disease = str(findDiseaseEntity(article.text))
 
             location = "N/A"
             multiCountry = checkForMultiCountry(locationAndDisease)
@@ -46,18 +68,15 @@ def retrieveJsonData(i):
                 location = multiCountry
             elif len(locationAndDisease) >= 2:
                 location = locationAndDisease[len(locationAndDisease)-1]
-            
             jsonData = {"date":date, "disease":disease, "location" : location}
 
             dataFormatted.append(jsonData)
-    
+            
     return dataFormatted
 
-# default filename: "WHOdataTest.json"
-def refreshAllJsonData(i, filename):
+def refreshAllJSONData(i, filename):
     f = open(filename, "w")
     
-    jsonData = retrieveJsonData(i)
+    data = retrieveJSONData(i)
             
-    f.write(json.dumps(jsonData))
-    f.close()
+    f.write(json.dumps(data))
