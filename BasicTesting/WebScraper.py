@@ -2,6 +2,7 @@ import requests
 import json
 import nltk
 nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
 from bs4 import BeautifulSoup
 
 def checkForMultiCountry(l):
@@ -12,10 +13,10 @@ def checkForMultiCountry(l):
             return "Global"
     return "None"
 
-def refreshAllJsonData(i):
-    f = open("WHOdataTest.json", "a")
+def retrieveJsonData(i):
+    
     dataFormatted = json.loads("[]")
-
+    
     while i > 0:
         WHOURL = "https://www.who.int/emergencies/disease-outbreak-news/" + str(i)
         i = i - 1
@@ -49,6 +50,14 @@ def refreshAllJsonData(i):
             jsonData = {"date":date, "disease":disease, "location" : location}
 
             dataFormatted.append(jsonData)
+    
+    return dataFormatted
+
+# default filename: "WHOdataTest.json"
+def refreshAllJsonData(i, filename):
+    f = open(filename, "a")
+    
+    jsonData = retrieveJsonData(i)
             
-    f.write(json.dumps(dataFormatted))
+    f.write(json.dumps(jsonData))
     f.close()
