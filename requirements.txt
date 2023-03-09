@@ -2,3 +2,4 @@ pytest
 flake8
 requests
 nltk==3.8.1
+spacy==3.4.4
