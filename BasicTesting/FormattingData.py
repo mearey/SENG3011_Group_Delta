@@ -51,7 +51,7 @@ def formattingEpiwatchData():
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
-    f = open("WHOdataTest.json", "r")
+    f = open("EpiwatchData.json", "r")
     allData = json.load(f)
     
     newDataEntry = {}
