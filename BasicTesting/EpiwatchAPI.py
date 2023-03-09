@@ -7,9 +7,14 @@ data = page.json()
 dataList = []
 
 def GetEpiwatchData():
+    print(data["results"])
     for item in data["results"]:
         date = item["publication_date"]
-        disease = item["disease"]
+        try:
+            disease = item["diseases"]
+        except KeyError:
+            disease = item["disease"]
+
         location = item["country_name"]
         dataFormatted = {"date":date, "disease":disease, "location" : location}
         dataList.append(dataFormatted)
