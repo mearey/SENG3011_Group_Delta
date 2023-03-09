@@ -55,7 +55,7 @@ def retrieveJsonData(i):
 
 # default filename: "WHOdataTest.json"
 def refreshAllJsonData(i, filename):
-    f = open(filename, "a")
+    f = open(filename, "w")
     
     jsonData = retrieveJsonData(i)
             
