@@ -1,14 +1,8 @@
 import requests
 import json
 from datetime import datetime
-import boto3
-import os
-import logging 
 
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
-
-def fromattingWHOData():
+def formattingWHOData():
     
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -20,20 +14,22 @@ def fromattingWHOData():
     newDataEntryList = []
     for data in allData:
        
-        newDataEntry["timeobject"] = {
+        newDataEntry["time_object"] = {
             "timestamp": data["date"],
             "duration" : 0,
             "duration_unit": "day",
             "timezone": "GMT+11"
         }
         
-
         newDataEntry["event_type"] = "article"
         newDataEntry["attribute"] = {
-            "country" : data['location'],
-            "disease" : data["disease"]
+            "disease" : data["disease"],
+            "syndrome" : [],
+            "location" : data["location"],
+            "event_date" : data["date"],
+            "date_of_publication" : " "
+            
         }
-
         newDataEntryList.append(newDataEntry)
 
 
@@ -50,30 +46,32 @@ def fromattingWHOData():
 
     return formattedData
 
-def fromattingEpiwatchData():
+def formattingEpiwatchData():
 
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
-    f = open("EpiwatchdataTest.json", "r")
+    f = open("WHOdataTest.json", "r")
     allData = json.load(f)
     
     newDataEntry = {}
     newDataEntryList = []
     for data in allData:
        
-        newDataEntry["timeobject"] = {
+        newDataEntry["time_object"] = {
             "timestamp": data["date"],
             "duration" : 0,
             "duration_unit": "day",
             "timezone": "GMT+11"
-        }
-        
+        }     
 
         newDataEntry["event_type"] = "article"
         newDataEntry["attribute"] = {
-            "country" : data['location'],
-            "disease" : data["disease"]
+            "disease" : data["disease"],
+            "syndrome" : [],
+            "location" : data["location"],
+            "event_date" : data["date"],
+            "date_of_publication" : " "
         }
 
         newDataEntryList.append(newDataEntry)
@@ -92,31 +90,43 @@ def fromattingEpiwatchData():
 
     return formattedData
 
-def combiningDataSets(epiwatchData, WHOdata):
+def combiningDataSets():
+
+    epiwatchData = formattingEpiwatchData()
+    WHOdata = formattingWHOData()
 
     data = []
     data.append(epiwatchData)
     data.append(WHOdata)
-    with open("finalData.json","w") as f:
-        json.dump(data, f)
-        f.close()
+    return data
 
-def trial():
-    # s3 = boto3.client('s3')
-    # contents = s3.list_objects(Bucket=os.getenv("GLOBAL_S3_NAME"))
-    # print(contents)
-    # keys = [item['Key'] for item in contents['Contents']]
-
-   
-    LOGGER.info(f"Received event: LMAP")
-    return {
-        "statusCode": 200,
-        "body": "json.dumps(event",
-        "headers": {
-            "Content-Type": "application/json",
-        },
+def uploadToS3():
+        
+    # getting token
+    UploadSignUpURL = "https://afzpve4n13.execute-api.ap-southeast-2.amazonaws.com/sign_up"
+    UploadLoginUpURL = "https://afzpve4n13.execute-api.ap-southeast-2.amazonaws.com/login"
+    jsonDataForSignup = {
+        "username": "H14B_DELTA",
+        "password": "deltapasswordidklmao127?$%",
+        "group": "H14B_DELTA"
     }
+
+    requests.post(UploadSignUpURL, json = jsonDataForSignup)  
+    data = requests.post(UploadLoginUpURL, json = jsonDataForSignup)  
+    token = json.loads(data.text)["token"] 
+
+    # uploading datasets
+    UploadToS3 = "https://afzpve4n13.execute-api.ap-southeast-2.amazonaws.com/F14A_SIERRA/upload"
+
+
+    jsonDataForUploadList = combiningDataSets()
+    tokenHeaderDict = {"Authorization" : token}
+    
+    for dataSet in jsonDataForUploadList:
+        requests.post(UploadToS3, json=dataSet, headers=tokenHeaderDict)
+        
   
 if __name__ == "__main__":
+    uploadToS3()
     
     
