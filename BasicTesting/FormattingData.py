@@ -1,14 +1,15 @@
 import requests
 import json
 from datetime import datetime
+from WebScraper import retrieveJSONData
+from EpiwatchAPI import GetEpiwatchData
 
 def formattingWHOData():
     
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
-    f = open("WHOdataTest.json", "r")
-    allData = json.load(f)
+    
+    allData = retrieveJSONData(1)
     
     newDataEntry = {}
     newDataEntryList = []
@@ -51,9 +52,8 @@ def formattingEpiwatchData():
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
-    f = open("EpiwatchData.json", "r")
-    allData = json.load(f)
-    
+    allData = GetEpiwatchData()
+
     newDataEntry = {}
     newDataEntryList = []
     for data in allData:
