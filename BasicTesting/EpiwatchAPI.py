@@ -9,7 +9,7 @@ dataList = []
 def GetEpiwatchData():
     for item in data["results"]:
         date = item["publication_date"]
-        disease = item["diseases"]
+        disease = item["disease"]
         location = item["country_name"]
         dataFormatted = {"date":date, "disease":disease, "location" : location}
         dataList.append(dataFormatted)
