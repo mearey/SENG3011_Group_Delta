@@ -4,6 +4,7 @@ import grpc
 import server_pb2
 import server_pb2_grpc
 import WebScraper
+from datetime import datetime
 
 class ServerTest(server_pb2_grpc.ServerTestServicer):
     def test(self, request, context):
@@ -16,6 +17,14 @@ def server():
     server.add_insecure_port("[::]:50051")
     print("Server starting :D")
     server.start()
+
+    now = datetime.now()
+    time = now.strftime("%H:%M:%S")
+    while time != "00:00:00":
+        now = datetime.now()
+        time = now.strftime("%H:%M:%S")
+    WebScraper.refreshAllJsonData(5, "BasicTesting/WHOdataTest.json")
+
     server.wait_for_termination()
 
 server()
