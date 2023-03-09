@@ -1,0 +1,7 @@
+pytest
+flake8
+requests
+nltk==3.8.1
+spacy==3.4.4
+beautifulsoup4==4.11.1
+https://huggingface.co/kormilitzin/en_core_med7_lg/resolve/main/en_core_med7_lg-any-py3-none-any.whl
