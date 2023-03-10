@@ -8,7 +8,7 @@ import json
 import requests
 
 # Import functions to be tested
-from BasicTesting.FormattingData import formattingWHOData, formattingEpiwatchData, combiningDataSets
+from FormattingData import formattingWHOData, formattingEpiwatchData, combiningDataSets
 
 # Empty test to allow CI to pass & ensure pytest is running correctly.
 # def test_empty():
