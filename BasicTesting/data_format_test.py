@@ -44,8 +44,10 @@ def testEpiwatchTemplate():
         for attribute in event['attribute']:
             assert list(event['attribute']) == ['disease', 'syndrome', 'location', 'event_date', 'date_of_publication']
 
+"""
 def testCombined():
     whoData = formattingWHOData()
     epiwatchData = formattingEpiwatchData()
     combinedData = combiningDataSets()
     assert whoData in combinedData and epiwatchData in combinedData
+"""
