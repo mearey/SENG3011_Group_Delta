@@ -8,11 +8,11 @@ import json
 import requests
 
 # Import functions to be tested
-from FormattingData import formattingWHOData, formattingEpiwatchData, combiningDataSets
+from BasicTesting.FormattingData import formattingWHOData, formattingEpiwatchData, combiningDataSets
 
 # Empty test to allow CI to pass & ensure pytest is running correctly.
-def test_empty():
-    pass
+# def test_empty():
+#     pass
 
 def testWHOTemplate():
     data = formattingWHOData()
@@ -44,10 +44,11 @@ def testEpiwatchTemplate():
         for attribute in event['attribute']:
             assert list(event['attribute']) == ['disease', 'syndrome', 'location', 'event_date', 'date_of_publication']
 
-"""
+
 def testCombined():
-    whoData = formattingWHOData()
     epiwatchData = formattingEpiwatchData()
-    combinedData = combiningDataSets()
-    assert whoData in combinedData and epiwatchData in combinedData
-"""
+    whoData = formattingWHOData()
+    combinedSETS = combiningDataSets(epiwatchData, whoData)
+    assert epiwatchData in combinedSETS
+    assert whoData in combinedSETS
+    

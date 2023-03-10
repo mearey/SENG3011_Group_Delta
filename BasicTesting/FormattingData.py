@@ -76,7 +76,6 @@ def formattingEpiwatchData():
 
         newDataEntryList.append(newDataEntry)
 
-
     formattedData = {
         "data_source": "epiwatch.org",
         "dataset_type": "Disease Info",
@@ -89,11 +88,9 @@ def formattingEpiwatchData():
     }
 
     return formattedData
+    
 
-def combiningDataSets():
-
-    epiwatchData = formattingEpiwatchData()
-    WHOdata = formattingWHOData()
+def combiningDataSets(epiwatchData, WHOdata):
 
     data = []
     data.append(epiwatchData)
@@ -119,7 +116,7 @@ def uploadToS3():
     UploadToS3 = "https://afzpve4n13.execute-api.ap-southeast-2.amazonaws.com/F14A_SIERRA/upload"
 
 
-    jsonDataForUploadList = combiningDataSets()
+    jsonDataForUploadList = combiningDataSets(formattingEpiwatchData(), formattingWHOData())
     tokenHeaderDict = {"Authorization" : token}
     
     for dataSet in jsonDataForUploadList:
@@ -128,5 +125,6 @@ def uploadToS3():
   
 if __name__ == "__main__":
     uploadToS3()
-    
+   
+
     
